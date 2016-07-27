@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+		<!--<meta name="viewport" content="user-scalable=no" />-->
+        <title>Avalon</title>
+		<link href="css/index.css?n" rel="stylesheet" type="text/css" />		
+		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="js/iscroll.js"></script>
+    </head>
+    <body>
+		<div id="header">
+			<textarea id="roleList" placeholder="> 在此输入角色列表，以逗号分隔..." onchange="fOnRoleListChange();"></textarea>
+			<div id="roleListSelect">
+				<table>
+					<tr>
+						<td width=100%>
+							<select id="cntListId" style="font-size:50px" id="" onchange="fOnListIdChange();">
+								<option value="5"> 5人局 </option>
+								<option value="6"> 6人局 </option>
+								<option value="7"> 7人局 </option>
+								<option value="8"> 8人局 </option>
+								<option value="9"> 9人局 </option>
+								<option value="10"> 10人局 </option>
+								<option value="A"> 自定义A </option>
+								<option value="B"> 自定义B </option>
+								<option value="C"> 自定义C </option>
+								<option value="R"> [清空缓存] </option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="guideInfo">
+				<a href="guideInfo.html">规则</a>
+			</div>
+		</div>
+		<div id="footer">
+			<div id="scroller" style="height:100%;">
+				<table height=20%>
+					<tr>
+						<td width=35%>
+							<button style="border-radius:0 0 50px 0" onclick="fResetRole(true);">重置角色</button>
+						</td>
+						<td width=30% id="roleScreen">
+							0/0已抽
+						</td>
+						<td width=35%>
+							<button style="border-radius:0 0 0 50px" onclick="fPickRole();">抽取角色</button>
+						</td>
+					</tr>
+				</table>
+				<table height=60%>
+					<tr id="voteChoice">
+						<!--
+						<td width=50%>
+							<button onclick="fVote(1);" class="voteButton" style="color:blue;">成功</span>
+						</td>
+						<td width=50%>
+							<button onclick="fVote(0);" class="voteButton" style="color:red;">失败</span>
+						</td>
+						-->
+					</tr>
+				</table>
+				<table height=20%>
+					<tr>
+						<td width=35%>
+							<button style="border-radius:0 50px 0 0" onclick="fResetVote();">重置投票</button>
+						</td>
+						<td width=30% id="voteScreen">
+							0人已投
+						</td>
+						<td width=35%>
+							<button style="border-radius:50px 0 0 0" onclick="fVoteResult();">投票结果</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+	
+    </body>
+</html>
+
+
+
+
+<script>
+//更新提示
+function fShowUpdateInfo()
+{
+	var latest_uid = "20150708-";
+	var latest_info = "角色方案选择功能完成";
+	
+	var uid=getCookie("avalon_update_id");
+	if(uid!=latest_uid){
+		//BEGIN：更新处理
+		fSetDefaultRoleLists();
+		//END：更新处理
+		
+		alert("【更新"+latest_uid+"】\n"+latest_info);
+		addCookie("avalon_update_id",latest_uid,365*24);
+	}
+}
+
+
+
+
+//========下面为“游戏前”代码=======
+
+//文档加载完毕再执行，这个一定注意
+$(document).ready(function(){
+	Init_iScroll();
+	fInitApp();
+});
+
+//初始化应用
+function fInitApp()
+{
+	var lastListId = getCookie('avalon_last_listId');
+	if(!lastListId){
+		fSetDefaultRoleLists();
+	}
+	else{
+		fSetCntListById(lastListId);
+	}
+	fResetRole(false);
+	fRandomlyDispChoice();
+	fShowUpdateInfo();
+}
+
+//设置默认角色列表
+function fSetDefaultRoleLists()
+{
+	addCookie('avalon_role_list_5','梅林，派西维尔，平板蓝，莫甘娜，刺客',365*24);
+	addCookie('avalon_role_list_6','梅林，派西维尔，平板蓝，平板蓝，莫甘娜，刺客',365*24);
+	addCookie('avalon_role_list_7','梅林，派西维尔，平板蓝，平板蓝，莫甘娜，刺客，奥伯伦',365*24);
+	addCookie('avalon_role_list_8','梅林，派西维尔，平板蓝，平板蓝，平板蓝，莫甘娜，刺客，爪牙',365*24);
+	addCookie('avalon_role_list_9','梅林，派西维尔，平板蓝，平板蓝，平板蓝，平板蓝，莫甘娜，刺客，莫德雷德',365*24);
+	addCookie('avalon_role_list_10','梅林，派西维尔，平板蓝，平板蓝，平板蓝，平板蓝，莫甘娜，刺客，莫德雷德，奥伯伦',365*24);
+	addCookie('avalon_role_list_A','',365*24);
+	addCookie('avalon_role_list_B','',365*24);
+	addCookie('avalon_role_list_C','',365*24);
+	
+	fSetCntListById('5');
+}
+
+
+//设置当前角色方案
+function fSetCntListById(listId)
+{
+	addCookie('avalon_last_listId',listId,365*24);
+	$("#cntListId").val(listId);
+	var roleList=getCookie('avalon_role_list_'+listId);
+	if(!roleList){
+		$("#roleList").val("");
+	}
+	else{
+		$("#roleList").val(roleList); 
+	}
+}
+
+//角色列表改变时触发
+function fOnRoleListChange()
+{
+	fSaveCntRoleList();
+	fResetRole(true);
+}
+
+//保存当前角色方案
+function fSaveCntRoleList()
+{
+	var listId=$("#cntListId").val();
+	var roleList=$("#roleList").val();
+	addCookie('avalon_role_list_'+listId,roleList,365*24);
+}
+
+//角色方案改变时触发
+function fOnListIdChange()
+{
+	var listId=$("#cntListId").val();
+	if (listId=='R') {
+		fSetDefaultRoleLists();
+	} else {
+		fSetCntListById(listId);
+	}
+	fResetRole(true);
+}
+
+
+
+//========下面为“游戏中”代码=======
+
+//全局变量
+RoleLeftList = [];
+RoleTotalNum = 0;
+RoleSelectedNum = 0;
+CntVotes = [];
+
+//重置角色
+function fResetRole(showalert)
+{
+	if($("#roleList").val().length <= 0) return;
+
+	//Reset或赋新值
+	fResetVote();
+	RoleSelectedNum = 0;
+
+	RoleLeftList = $("#roleList").val().split(/,|，/);
+	RoleTotalNum = RoleLeftList.length;
+	$("#roleScreen").html("0/"+RoleTotalNum+"已抽");
+	
+	if(showalert) alert("重置角色成功！\n玩家数："+RoleTotalNum+"\n可以开始[抽取角色]了");
+}
+
+
+//抽取角色
+function fPickRole()
+{		
+	if(RoleLeftList.length <= 0)
+	{
+		if(RoleTotalNum > 0) alert("角色抽牌完成，可以开始游戏了\n若想重新抽牌，请点击[重置角色]");
+		else alert("请先在上方输入角色列表，\n然后[重置角色]");
+		return;
+	}
+	
+	RoleSelectedNum++;
+	
+	var playerId = RoleSelectedNum;
+	
+	//random函数返回值：返回0和1之间的伪随机数，可能为0，但总是小于1，[0,1)
+	var ridx = parseInt(Math.random()*RoleLeftList.length);
+	var role = RoleLeftList[ridx];
+	RoleLeftList.splice(ridx,1);
+	
+	$("#roleScreen").html(RoleSelectedNum+"/"+RoleTotalNum+"已抽");
+	
+	alert("你的玩家编号为："+playerId+"\n你的角色为："+role);
+	
+	if(RoleLeftList.length <= 0)
+	{
+		alert("角色抽牌完成\n可以开始游戏了");
+	}
+}
+
+
+//重置投票
+function fResetVote()
+{
+	CntVotes = [];
+	$("#voteScreen").html("0人已投");
+	fRandomlyDispChoice();
+}
+
+
+//隐藏投票区内容
+function fHideChoice()
+{
+	$("#voteChoice").html("");
+}
+
+
+//随机成败选项位置
+function fRandomlyDispChoice()
+{
+	var success='<td width=50%><button onclick="fVote(1);" class="voteButton" style="color:blue;	font-weight:bold;"><h1>O</h1>成功</span></td>';
+	var fail='<td width=50%><button onclick="fVote(0);" class="voteButton" style="color:red;	font-weight:bold;"><h1>X</h1>失败</span></td>';
+	if(Math.random()>0.5){
+		$("#voteChoice").html(success+fail);
+	}
+	else{
+		$("#voteChoice").html(fail+success);
+	}
+}
+
+//投票
+function fVote(v)
+{	
+	CntVotes.push(v);
+	$("#voteScreen").html(CntVotes.length+"人已投");
+	fHideChoice();
+	
+	setTimeout(function(){
+		alert("投票完成！\n请直接交给下一位玩家");
+		fRandomlyDispChoice();
+	},100);	//setTimeout: to wait for clearing the vote disp
+}
+
+
+//投票结果
+function fVoteResult()
+{
+	if(CntVotes.length <=0 )return;
+
+	var count1 = 0;
+	var count0 = 0;
+	for(var i=0; i<CntVotes.length;i++)
+	{
+		if(CntVotes[i]==0) count0++;
+		else count1++;
+	}
+	alert("成功票数："+count1+"\n失败票数："+count0);
+	
+	fResetVote();
+}
+
+</script>
+
+
+
+<!-- iScroll -->
+<script>
+var myScroll;
+
+function Init_iScroll(){
+	myScroll = new iScroll('footer', {
+		vScroll:false,
+		onScrollEnd: function () {	
+			fHideChoice();
+			setTimeout('fRandomlyDispChoice();',300);
+		}
+	});
+}
+</script>
+
+
+
+<!-- the cookie code following is from http://blog.163.com/yanglei_sky/blog/static/37726389201242911635222/ -->
+<script>
+function addCookie(objName,objValue,objHours){//添加cookie
+var str = objName + "=" + escape(objValue);
+if(objHours > 0){//为0时不设定过期时间，浏览器关闭时cookie自动消失
+var date = new Date();
+var ms = objHours*3600*1000;
+date.setTime(date.getTime() + ms);
+str += "; expires=" + date.toGMTString();
+}
+document.cookie = str;
+//alert("添加cookie成功");
+}
+
+function getCookie(objName){//获取指定名称的cookie的值
+var arrStr = document.cookie.split("; ");
+for(var i = 0;i < arrStr.length;i ++){
+var temp = arrStr[i].split("=");
+if(temp[0] == objName) return unescape(temp[1]);
+} 
+}
+
+function delCookie(name){//为了删除指定名称的cookie，可以将其过期时间设定为一个过去的时间
+var date = new Date();
+date.setTime(date.getTime() - 10000);
+document.cookie = name + "=a; expires=" + date.toGMTString();
+}
+</script>
