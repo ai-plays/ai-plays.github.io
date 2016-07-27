@@ -36,8 +36,7 @@
 			</div>
 		</div>
 
-		<div id="footer1">
-			<div id="footer">
+		<div id="footer">
 			<div id="scroller">
 				<table height=20%>
 					<tr>
@@ -79,8 +78,6 @@
 				</table>
 			</div>
 		</div>
-	</div>
-
 	
     </body>
 </html>
@@ -316,7 +313,7 @@ function fVoteResult()
 var myScroll;
 
 function Init_iScroll(){
-	myScroll = new iScroll('footer1', {
+	myScroll = new iScroll('footer', {
 		vScroll:false,
 		onScrollEnd: function () {	
 			fHideChoice();
