@@ -76,13 +76,36 @@ a{
 	color:purple;
 }
 
-
+#scroller{
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
 
 #footer{
-	display:table;
+	display: table;
 	position: absolute;
 	top: 0px;
-	padding-top:300px;
+	padding-top: 300px;
 	width: 100%; 
 	height: 100%; 
 }
+
+
+
+/*
+#footer{
+	display: table;
+	position: absolute;
+	top: 0px;
+	padding-top: 300px;
+	width: 100%; 
+	height: 100%; 
+}
+
+#scroller{
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+*/

@@ -35,8 +35,10 @@
 				<a href="guideInfo.html">规则</a>
 			</div>
 		</div>
-		<div id="footer">
-			<div id="scroller" style="height:100%;">
+
+		<div id="footer1">
+			<div id="footer">
+			<div id="scroller">
 				<table height=20%>
 					<tr>
 						<td width=35%>
@@ -77,6 +79,7 @@
 				</table>
 			</div>
 		</div>
+	</div>
 
 	
     </body>
@@ -313,7 +316,7 @@ function fVoteResult()
 var myScroll;
 
 function Init_iScroll(){
-	myScroll = new iScroll('footer', {
+	myScroll = new iScroll('footer1', {
 		vScroll:false,
 		onScrollEnd: function () {	
 			fHideChoice();
