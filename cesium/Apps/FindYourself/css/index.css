@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+* {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+video {
+  height:100%; 
+  width:100%;
+  background-color: white;
+  object-fit: cover;
+}
+
