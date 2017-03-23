@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>66 Find Yourself</title>
+  <title>77 Find Yourself</title>
   <script src="../../Build/Cesium/Cesium.js"></script>
   <style>
       @import url(../../Build/Cesium/Widgets/widgets.css);
@@ -29,7 +29,7 @@
   -->
 
   <video id="my_video" preload autoplay playsinline>
-    <source src="res/the_known_universe_by_amnh.mp4" type="video/mp4">
+    <source src="res/the_known_universe_by_amnh.mp4#t=20,30" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 
@@ -49,7 +49,7 @@
       });
       wx.ready(function() {
           document.getElementById('my_video').play();
-          alert("1");
+          alert("2");
       });
   }
   
