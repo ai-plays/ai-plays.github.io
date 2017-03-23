@@ -98,11 +98,13 @@ WebGL Earth
   https://gist.github.com/ufologist/7c14837db642a6e916ce
 4. Wechat JSSDK：
   http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
-5.
+5. jQuery: functional; jQuery Mobile: mainly about UI; jQuery_slim: -some function e.g. ajax and effects;
+6. 
 
 
 [NEXT]
 1. web-zoom; Earth;
+
 2. background music;
 4. subtitle; get answer;
 5. 统计访问量；用公众号发？
