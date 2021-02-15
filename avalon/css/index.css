@@ -11,7 +11,8 @@ html,body{
 	font-size:50px;
 	font-family: 微软雅黑;
 	color:white;
-	background: url('http://thecodeplayer.com/u/m/wfbg.png');
+	/* background: url('http://thecodeplayer.com/u/m/wfbg.png');*/
+	background-color: darkgray;
 	width:100%;
 	height:100%;
 }
