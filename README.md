@@ -1,2 +1,2 @@
-# steven-chengji-yan.github.io
+# ai-plays.github.io
 website
